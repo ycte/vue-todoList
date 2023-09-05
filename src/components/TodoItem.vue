@@ -10,8 +10,8 @@ const editingState = ref({
   editingTitle: ""
 })
 const checked = ref(props.completed);
-console.log(props);
-console.log(editingState.value.editingTitle);
+// console.log(props);
+// console.log(editingState.value.editingTitle);
 
 // 编辑备忘
 function editTodo() {  
