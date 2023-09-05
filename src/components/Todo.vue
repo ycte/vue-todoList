@@ -1,12 +1,22 @@
 <script setup>
 import { ref, computed } from "vue";
-import { Velocity } from "velocity-animate";
+import Velocity from "velocity-animate";
 import TodoItem from "./TodoItem.vue";
 
 const todos = ref([
   {
     id: 0,
     title: "吃饭",
+    completed: true,
+  },
+  {
+    id: 1,
+    title: "睡觉",
+    completed: true,
+  },
+  {
+    id: 2,
+    title: "打原神启动",
     completed: true,
   },
 ]); // 所有备忘列表
@@ -24,8 +34,9 @@ const matchTodos = computed(() => {
   });
 }); // 与当前输入匹配的todo
 
+/* CRUD */
 // 添加备忘
-let id = 1;
+let id = 3;
 function addTodo() {
   console.log("添加", newTodo.value);
   if (!newTodo.value) {
@@ -40,7 +51,14 @@ function addTodo() {
   console.log("添加成功", todos.value);
   console.log("匹配结果", matchTodos.value);
 }
-
+// 删除备忘
+function removeTodo(todo) {
+  for (let i = 0; i < todos.value.length; i++) {
+    console.log(todos.value[i], todo.id, todo.id == todos.value[i].id);
+  }
+  todos.value = todos.value.filter((t) => t.id != todo.id);
+  console.log("删除", todo.title, todos.value, matchTodos);
+}
 // 清除已完成
 function clearCompleted() {
   todos.value = todos.value.filter((todo) => !todo.completed);
@@ -49,25 +67,25 @@ function clearCompleted() {
 /* 动画效果 */
 // 进入中
 function beforeEnter(el) {
-  // el.style.opacity = 0;
-  // el.style.height = 0;
+  el.style.opacity = 0;
+  el.style.height = 0;
 }
 function enter(el, done) {
   // 设置延时
   var delay = el.dataset.index * 150;
-  // setTimeout(function () {
-  //   // 更新元素样式
-  //   Velocity(el, { opacity: 1, height: "58px" }, { complete: done });
-  // }, delay);
+  setTimeout(function () {
+    // 更新元素样式
+    Velocity(el, { opacity: 1, height: "58px" }, { complete: done });
+  }, delay);
 }
 // 离开时
 function leave(el, done) {
   // 设置延时
   var delay = el.dataset.index * 150;
-  // setTimeout(function () {
-  //   // 更新元素样式
-  //   Velocity(el, { opacity: 0, height: 0 }, { complete: done });
-  // }, delay);
+  setTimeout(function () {
+    // 更新元素样式
+    Velocity(el, { opacity: 0, height: 0 }, { complete: done });
+  }, delay);
 }
 </script>
 
@@ -78,6 +96,7 @@ function leave(el, done) {
     placeholder="What needs to be done?"
     type="text"
     v-model="newTodo"
+    @input="console.log('input change', newTodo, matchTodos)"
     @keyup.enter="addTodo"
   />
 
@@ -104,7 +123,7 @@ function leave(el, done) {
         @update:title="(title) => (todo.title = title)"
         :completed="todo.completed"
         @update:completed="(completed) => (todo.completed = completed)"
-        @delete="() => todos.value.splice(todos.value.indexOf(todo), 1)"
+        @delete="removeTodo(todo)"
       ></TodoItem>
     </li>
   </transition-group>
@@ -125,3 +144,7 @@ function leave(el, done) {
     </button>
   </footer>
 </template>
+
+<!-- <style>
+@import "https://unpkg.com/todomvc-app-css@2.1.0/index.css";
+</style> -->
